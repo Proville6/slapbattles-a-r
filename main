@@ -1,5 +1,6 @@
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
+local StarterGui = game:GetService("StarterGui")
 
 local localPlayer = Players.LocalPlayer
 
@@ -36,6 +37,12 @@ localPlayer.CharacterAdded:Connect(function(character)
 	Character = character
 end)
 
+local stuckStates = {
+	Enum.HumanoidStateType.FallingDown,
+	Enum.HumanoidStateType.GettingUp,
+	Enum.HumanoidStateType.Ragdoll
+}
+
 local recordedCFrames = {}
 
 for _,bodypart in ipairs(bodyparts) do
@@ -58,13 +65,13 @@ function activate(velocity)
 	workspace:BulkMoveTo(partList,cframeList,Enum.BulkMoveMode.FireCFrameChanged)
 end
 
-RunService.RenderStepped:Connect(function()
+local c = RunService.RenderStepped:Connect(function()
 	local velocity = math.round(Character["HumanoidRootPart"].Velocity.Magnitude)
 
 	local humanoid: Humanoid = Character.Humanoid
-	humanoid.WalkSpeed = 26
-
-	if Character.Ragdolled.Value or humanoid:GetState()==Enum.HumanoidStateType.FallingDown or velocity>100 then
+	
+	
+	if Character.Ragdolled.Value or table.find(stuckStates,humanoid:GetState()) or velocity>100 then
 		activate(velocity)
 	else
 		for _,bodypart in ipairs(bodyparts) do
@@ -73,3 +80,21 @@ RunService.RenderStepped:Connect(function()
 	end
 
 end)
+
+local disable = Instance.new("BindableFunction")
+disable.OnInvoke = function()
+	c:Disconnect()
+	StarterGui:SetCore("SendNotification",{
+		["Title"] = "Disabled",
+		["Text"] = "Successfully disabled anti-ragdoll",
+		["Duration"] = 2.5,
+	})
+end
+
+StarterGui:SetCore("SendNotification",{
+	["Title"] = "Anti-ragdoll",
+	["Text"] = "Press the button below to disable anti-ragdoll.",
+	["Duration"] = math.huge,
+	["Callback"] = disable,
+	["Button1"] = "Disable"
+})
