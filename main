@@ -43,6 +43,7 @@ for _,bodypart in ipairs(bodyparts) do
 end
 
 RunService.RenderStepped:Connect(function()
+	Character.Humanoid.WalkSpeed = 26
 	if Character.Ragdolled.Value then
 		local velocity = math.round(Character.HumanoidRootPart.Velocity.Magnitude)
 		
