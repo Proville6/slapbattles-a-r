@@ -82,19 +82,29 @@ local c = RunService.RenderStepped:Connect(function()
 end)
 
 local disable = Instance.new("BindableFunction")
-disable.OnInvoke = function()
+disable.OnInvoke = function(name)
 	c:Disconnect()
-	StarterGui:SetCore("SendNotification",{
-		["Title"] = "Disabled",
-		["Text"] = "Successfully disabled anti-ragdoll",
-		["Duration"] = 2.5,
-	})
+	if name=="Disabled" then
+		StarterGui:SetCore("SendNotification",{
+			["Title"] = "Disabled",
+			["Text"] = "Successfully disabled anti-ragdoll",
+			["Duration"] = 2.5,
+		})
+	else
+		loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/Proville6/slapbattles-a-r/main/main",true))()
+		StarterGui:SetCore("SendNotification",{
+			["Title"] = "Reloaded",
+			["Text"] = "Successfully reloaded anti-ragdoll",
+			["Duration"] = 2.5,
+		})
+	end
 end
 
 StarterGui:SetCore("SendNotification",{
 	["Title"] = "Anti-ragdoll",
-	["Text"] = "Press the button below to disable anti-ragdoll.",
+	["Text"] = "Press the button below to disable or reload anti-ragdoll.",
 	["Duration"] = math.huge,
 	["Callback"] = disable,
-	["Button1"] = "Disable"
+	["Button1"] = "Disable",
+	["Button2"] = "Reload"
 })
