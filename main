@@ -75,7 +75,7 @@ local c = RunService.RenderStepped:Connect(function()
 		activate(velocity)
 	else
 		for _,bodypart in ipairs(bodyparts) do
-			recordedCFrames[bodypart][#recordedCFrames[bodypart]+1] = Character[bodypart].CFrame*CFrame.new(Vector3.new(1,2,1))
+			recordedCFrames[bodypart][#recordedCFrames[bodypart]+1] = Character[bodypart].CFrame
 		end
 	end
 
