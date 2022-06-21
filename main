@@ -10,7 +10,7 @@ local bodyparts = {
 	"Left Leg",
 	"Right Arm",
 	"Right Leg",
-	--"Torso"
+	"Torso"
 }
 
 --type PlayerCharacter = {
@@ -42,24 +42,34 @@ for _,bodypart in ipairs(bodyparts) do
 	recordedCFrames[bodypart] = {}
 end
 
+function activate(velocity)
+	--local velocity = math.round(Character["HumanoidRootPart"].Velocity.Magnitude)
+
+	local partList = {}
+	local cframeList = {}
+
+
+
+	for _,bodypart in ipairs(bodyparts) do
+		partList[#partList+1] = Character[bodypart]
+		cframeList[#cframeList+1] = recordedCFrames[bodypart][#recordedCFrames[bodypart]-velocity]
+		--Character[bodypart].CFrame = recordedCFrames[bodypart][#recordedCFrames[bodypart]-velocity]
+	end
+	workspace:BulkMoveTo(partList,cframeList,Enum.BulkMoveMode.FireCFrameChanged)
+end
+
 RunService.RenderStepped:Connect(function()
-	Character.Humanoid.WalkSpeed = 26
-	if Character.Ragdolled.Value then
-		local velocity = math.round(Character.HumanoidRootPart.Velocity.Magnitude)
-		
-		local partList = {}
-		local cframeList = {}
-		
-		for _,bodypart in ipairs(bodyparts) do
-			partList[#partList+1] = Character[bodypart]
-			cframeList[#cframeList+1] = recordedCFrames[bodypart][#recordedCFrames[bodypart]-velocity] or recordedCFrames[bodypart][#recordedCFrames[bodypart]]
-			--Character[bodypart].CFrame = recordedCFrames[bodypart][#recordedCFrames[bodypart]-velocity]
-		end
-		workspace:BulkMoveTo(partList,cframeList,Enum.BulkMoveMode.FireCFrameChanged)
+	local velocity = math.round(Character["HumanoidRootPart"].Velocity.Magnitude)
+
+	local humanoid: Humanoid = Character.Humanoid
+	humanoid.WalkSpeed = 26
+
+	if Character.Ragdolled.Value or humanoid:GetState()==Enum.HumanoidStateType.FallingDown or velocity>100 then
+		activate(velocity)
 	else
 		for _,bodypart in ipairs(bodyparts) do
 			recordedCFrames[bodypart][#recordedCFrames[bodypart]+1] = Character[bodypart].CFrame*CFrame.new(Vector3.new(1,2,1))
 		end
 	end
-	
+
 end)
