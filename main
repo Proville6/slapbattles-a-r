@@ -3,6 +3,16 @@ local Players = game:GetService("Players")
 
 local localPlayer = Players.LocalPlayer
 
+local bodyparts = {
+	"Head",
+	"HumanoidRootPart",
+	"Left Arm",
+	"Left Leg",
+	"Right Arm",
+	"Right Leg",
+	"Torso"
+}
+
 --type PlayerCharacter = {
 --	["Body Colors"]: BodyColors,
 --	["Pants"]: Pants,
@@ -27,12 +37,22 @@ localPlayer.CharacterAdded:Connect(function(character)
 end)
 
 local recordedCFrames = {}
+
+for _,bodypart in ipairs(bodyparts) do
+	recordedCFrames[bodypart] = {}
+end
+
 RunService.RenderStepped:Connect(function()
 	if Character.Ragdolled.Value then
-		local velocity = math.round(Character.HumanoidRootPart.Velocity.Magnitude/2)
-		Character.HumanoidRootPart.CFrame = recordedCFrames[#recordedCFrames-velocity]
+		local velocity = math.round(Character.HumanoidRootPart.Velocity.Magnitude)
+		--Character.HumanoidRootPart.CFrame = recordedCFrames[#recordedCFrames-velocity]
+		for _,bodypart in ipairs(bodyparts) do
+			Character[bodypart].CFrame = recordedCFrames[bodypart][#recordedCFrames[bodypart]-velocity]
+		end
 	else
-		recordedCFrames[#recordedCFrames+1] = Character.HumanoidRootPart.CFrame
+		for _,bodypart in ipairs(bodyparts) do
+			recordedCFrames[bodypart][#recordedCFrames[bodypart]+1] = Character[bodypart].CFrame*CFrame.new(Vector3.new(1,2,1))
+		end
 	end
 	
 end)
