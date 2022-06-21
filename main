@@ -1,0 +1,38 @@
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+
+local localPlayer = Players.LocalPlayer
+
+--type PlayerCharacter = {
+--	["Body Colors"]: BodyColors,
+--	["Pants"]: Pants,
+--	["Health"]: Script,
+--	["Humanoid"]: Humanoid,
+--	["Animate"]: LocalScript,
+--	["Head"]: Part,
+--	["HumanoidRootPart"]: Part,
+--	["Left Arm"]: Part,
+--	["Left Leg"]: Part,
+--	["Right Arm"]: Part,
+--	["Right Leg"]: Part,
+--	["Torso"]: Part,
+
+--	["Ragdolled"]: BoolValue
+--}
+
+local Character = localPlayer.Character
+
+localPlayer.CharacterAdded:Connect(function(character)
+	Character = character
+end)
+
+local recordedCFrames = {}
+RunService.RenderStepped:Connect(function()
+	if Character.Ragdolled.Value then
+		local velocity = math.round(Character.HumanoidRootPart.Velocity.Magnitude/2)
+		Character.HumanoidRootPart.CFrame = recordedCFrames[#recordedCFrames-velocity]
+	else
+		recordedCFrames[#recordedCFrames+1] = Character.HumanoidRootPart.CFrame
+	end
+	
+end)
