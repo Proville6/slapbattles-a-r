@@ -10,7 +10,7 @@ local bodyparts = {
 	"Left Leg",
 	"Right Arm",
 	"Right Leg",
-	"Torso"
+	--"Torso"
 }
 
 --type PlayerCharacter = {
@@ -44,7 +44,7 @@ end
 
 RunService.RenderStepped:Connect(function()
 	if Character.Ragdolled.Value then
-		local velocity = math.round(Character.HumanoidRootPart.Velocity.Magnitude*1.5)
+		local velocity = math.round(Character.HumanoidRootPart.Velocity.Magnitude)
 		
 		local partList = {}
 		local cframeList = {}
