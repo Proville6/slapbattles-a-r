@@ -44,11 +44,17 @@ end
 
 RunService.RenderStepped:Connect(function()
 	if Character.Ragdolled.Value then
-		local velocity = math.round(Character.HumanoidRootPart.Velocity.Magnitude)
-		--Character.HumanoidRootPart.CFrame = recordedCFrames[#recordedCFrames-velocity]
+		local velocity = math.round(Character.HumanoidRootPart.Velocity.Magnitude*1.5)
+		
+		local partList = {}
+		local cframeList = {}
+		
 		for _,bodypart in ipairs(bodyparts) do
-			Character[bodypart].CFrame = recordedCFrames[bodypart][#recordedCFrames[bodypart]-velocity]
+			partList[#partList+1] = Character[bodypart]
+			cframeList[#cframeList+1] = recordedCFrames[bodypart][#recordedCFrames[bodypart]-velocity] or recordedCFrames[bodypart][#recordedCFrames[bodypart]]
+			--Character[bodypart].CFrame = recordedCFrames[bodypart][#recordedCFrames[bodypart]-velocity]
 		end
+		workspace:BulkMoveTo(partList,cframeList,Enum.BulkMoveMode.FireCFrameChanged)
 	else
 		for _,bodypart in ipairs(bodyparts) do
 			recordedCFrames[bodypart][#recordedCFrames[bodypart]+1] = Character[bodypart].CFrame*CFrame.new(Vector3.new(1,2,1))
