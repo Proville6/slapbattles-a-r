@@ -82,10 +82,9 @@ local c = RunService.RenderStepped:Connect(function()
 end)
 
 local disable = Instance.new("BindableFunction")
-disable.OnInvoke = function(...)
-	print(...)
+disable.OnInvoke = function(name)
 	c:Disconnect()
-	if "e"=="Disable" then
+	if name=="Disable" then
 		StarterGui:SetCore("SendNotification",{
 			["Title"] = "Disabled",
 			["Text"] = "Successfully disabled anti-ragdoll",
