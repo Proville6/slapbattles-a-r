@@ -71,7 +71,7 @@ local c = RunService.RenderStepped:Connect(function()
 	local humanoid: Humanoid = Character.Humanoid
 	
 	
-	if Character.Ragdolled.Value or table.find(stuckStates,humanoid:GetState()) or velocity>100 then
+	if Character.Ragdolled.Value or table.find(stuckStates,humanoid:GetState()) or velocity>50 then
 		activate(velocity)
 	else
 		for _,bodypart in ipairs(bodyparts) do
@@ -84,7 +84,7 @@ end)
 local disable = Instance.new("BindableFunction")
 disable.OnInvoke = function(name)
 	c:Disconnect()
-	if name=="Disabled" then
+	if name=="Disable" then
 		StarterGui:SetCore("SendNotification",{
 			["Title"] = "Disabled",
 			["Text"] = "Successfully disabled anti-ragdoll",
