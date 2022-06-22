@@ -1,6 +1,9 @@
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local StarterGui = game:GetService("StarterGui")
+local UserInputService = game:GetService("UserInputService")
+
+local camera = workspace.CurrentCamera
 
 local localPlayer = Players.LocalPlayer
 
@@ -43,36 +46,95 @@ local stuckStates = {
 	Enum.HumanoidStateType.Ragdoll
 }
 
+local moveAroundKeys = {
+	Enum.KeyCode.A,
+	Enum.KeyCode.S,
+	Enum.KeyCode.W,
+	Enum.KeyCode.D
+}
+
+local moveAroundNormals = {
+	Enum.NormalId.Right,
+	Enum.NormalId.Back,
+	Enum.NormalId.Front,
+	Enum.NormalId.Left
+}
+
 local recordedCFrames = {}
 
 for _,bodypart in ipairs(bodyparts) do
 	recordedCFrames[bodypart] = {}
 end
 
-function activate(velocity)
+function activate(velocity,dt)
 	--local velocity = math.round(Character["HumanoidRootPart"].Velocity.Magnitude)
+	
+	local cameraCFrame = camera.CFrame
+	
+	local moveDirection = Vector3.new(0,0,0)
+	--for i=1,4 do
+	--	local key = moveAroundKeys[i]
+	--	local direction = Vector3.fromNormalId(moveAroundNormals[i])
 
+	--	if UserInputService:IsKeyDown(key) then
+	--		moveDirection += direction+cameraLookVector
+	--	end
+	--end
+	
+	--if moveDirection.Magnitude>0 then
+	--	moveDirection += (cameraLookVector*Vector3.new(1,0,1))
+	--end
+	
+	--if moveDirection.Magnitude>0 then
+	--	moveDirection *= (cameraLookVector*Vector3.new(1,1,1))
+	--end
+	
+	if UserInputService:IsKeyDown(Enum.KeyCode.W) then
+		moveDirection += cameraCFrame.LookVector
+	end
+	
+	if UserInputService:IsKeyDown(Enum.KeyCode.A) then
+		moveDirection += -cameraCFrame.RightVector
+	end
+	if UserInputService:IsKeyDown(Enum.KeyCode.D) then
+		moveDirection += cameraCFrame.RightVector
+	end
+	
+	if UserInputService:IsKeyDown(Enum.KeyCode.S) then
+		moveDirection += -cameraCFrame.LookVector
+	end
+	
+	
+	
 	local partList = {}
 	local cframeList = {}
 
 
 
 	for _,bodypart in ipairs(bodyparts) do
+		local cframe = recordedCFrames[bodypart][#recordedCFrames[bodypart]-30]
+		
+		recordedCFrames[bodypart][#recordedCFrames[bodypart]-30] = cframe+(moveDirection*(dt+0.4))
+		
 		partList[#partList+1] = Character[bodypart]
-		cframeList[#cframeList+1] = recordedCFrames[bodypart][#recordedCFrames[bodypart]-velocity]
+		
+		cframeList[#cframeList+1] = cframe
 		--Character[bodypart].CFrame = recordedCFrames[bodypart][#recordedCFrames[bodypart]-velocity]
 	end
 	workspace:BulkMoveTo(partList,cframeList,Enum.BulkMoveMode.FireCFrameChanged)
 end
 
-local c = RunService.RenderStepped:Connect(function()
-	local velocity = math.round(Character["HumanoidRootPart"].Velocity.Magnitude)
+local c = RunService.RenderStepped:Connect(function(dt)
+	local velocity = math.round(Character["HumanoidRootPart"].Velocity.Magnitude/3)
 
 	local humanoid: Humanoid = Character.Humanoid
 	
 	
-	if Character.Ragdolled.Value or table.find(stuckStates,humanoid:GetState()) or velocity>99 then
-		activate(velocity)
+	if Character.Ragdolled.Value or table.find(stuckStates,humanoid:GetState()) or velocity*3>99 then
+		
+		
+		
+		activate(velocity,dt)
 	else
 		for _,bodypart in ipairs(bodyparts) do
 			recordedCFrames[bodypart][#recordedCFrames[bodypart]+1] = Character[bodypart].CFrame
