@@ -71,7 +71,7 @@ local c = RunService.RenderStepped:Connect(function()
 	local humanoid: Humanoid = Character.Humanoid
 	
 	
-	if Character.Ragdolled.Value or table.find(stuckStates,humanoid:GetState()) or velocity>50 then
+	if Character.Ragdolled.Value or table.find(stuckStates,humanoid:GetState()) or velocity>99 then
 		activate(velocity)
 	else
 		for _,bodypart in ipairs(bodyparts) do
